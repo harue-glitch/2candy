@@ -12,18 +12,21 @@
             font-family: 'Kosugi Maru', sans-serif;
             background-color: #FFF9E6; /* やさしいクリーム色 */
             touch-action: none; /* iPadでのスワイプによる画面スクロールを防止 */
+            /* iOSのSafari等でURLバーを考慮した高さ (100dvh) を指定 */
+            height: 100dvh;
+            width: 100vw;
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
         }
 
-        /* チュートリアルの手の動きアニメーション */
+        /* チュートリアルの手の動きアニメーション (右から左へ運ぶイメージに変更) */
         @keyframes tutorial-drag {
             0% { transform: translate(0, 0) scale(1); opacity: 0; }
             10% { transform: translate(0, 0) scale(1.1); opacity: 1; }
             20% { transform: translate(0, 0) scale(0.9); opacity: 1; } /* タッチしたような表現 */
-            70% { transform: translate(-150px, -20px) scale(0.9); opacity: 1; } /* 左方向へドラッグ */
-            80% { transform: translate(-150px, -20px) scale(1); opacity: 0; } /* 離す */
+            70% { transform: translate(-80px, 0) scale(0.9); opacity: 1; } /* 左方向へドラッグ */
+            80% { transform: translate(-80px, 0) scale(1); opacity: 0; } /* 離す */
             100% { transform: translate(0, 0) scale(1); opacity: 0; }
         }
         .animate-tutorial-hand {
@@ -62,13 +65,13 @@
         /* キャンディペアのスタイリング */
         .candy-pair {
             transition: transform 0.1s;
-            z-index: 10;
+            /* ドラッグ前の基本の重なり順 */
+            z-index: 50; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
         .candy-pair.dragging {
             transform: scale(1.2);
-            /* ドラッグ中は最前面になるように、CSS側でも高い値を設定しておくが、
-               確実にするためJS側でも動的にインクリメントして付与します */
+            /* ドラッグ中は最前面になるように。JSでも動的に大きな値を設定します */
             z-index: 9999 !important;
             opacity: 0.9;
             transition: none;
@@ -88,62 +91,69 @@
         }
     </style>
 </head>
-<body class="w-screen h-screen flex flex-row relative" onclick="playInitialAudio()">
+<!-- bodyにflex-rowを指定し、常に横長レイアウトにする。 -->
+<body class="flex flex-row relative">
 
-    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-2 md:p-6 text-center text-white">
-        <div class="bg-white text-gray-800 p-4 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl w-11/12 max-w-2xl max-h-[95vh] overflow-y-auto relative flex flex-col items-center">
-            <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-8 leading-relaxed text-orange-500 tracking-widest cursor-pointer" onclick="playTitleAudio(event)">
+    <!-- チュートリアル画面（オーバーレイ） -->
+    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-2 text-center text-white overflow-y-auto">
+        <div class="bg-white text-gray-800 p-4 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl w-11/12 max-w-2xl max-h-[90dvh] flex flex-col items-center overflow-y-auto">
+            <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-8 leading-relaxed text-orange-500 tracking-widest cursor-pointer flex items-center justify-center gap-2" onclick="playTitleAudio(event)">
                 2こずつ　わけよう <span class="text-2xl md:text-3xl text-gray-400">🔊</span>
             </h1>
             
-            <div class="flex justify-center items-center gap-4 md:gap-8 my-4 md:my-8 h-24 sm:h-32 md:h-48 bg-orange-50 rounded-2xl relative overflow-hidden w-full">
-                <div class="flex flex-col items-center z-10">
-                    <span class="text-4xl md:text-6xl">😭</span>
-                    <div class="w-16 h-8 md:w-24 md:h-12 border-4 border-dashed border-orange-300 rounded-xl mt-1 md:mt-2 flex items-center justify-center bg-white"></div>
+            <div class="flex justify-center items-center gap-4 md:gap-12 my-4 md:my-8 h-24 sm:h-32 bg-orange-50 rounded-2xl relative w-full overflow-hidden">
+                <!-- 左側：子どもと枠 -->
+                <div class="flex flex-col items-center z-10 w-1/2">
+                    <span class="text-4xl sm:text-5xl">😭</span>
+                    <div class="w-16 h-8 sm:w-20 sm:h-10 border-4 border-dashed border-orange-300 rounded-xl mt-1 flex items-center justify-center bg-white"></div>
                 </div>
                 
-                <div class="relative z-10">
-                    <div class="text-2xl md:text-4xl bg-white/80 p-2 rounded-full shadow-md relative">
+                <!-- 右側：キャンディと手（右から左へ動く） -->
+                <div class="relative z-10 w-1/2 flex justify-center">
+                    <div class="text-2xl sm:text-4xl bg-white/80 p-2 rounded-full shadow-md relative">
                         🍬🍬
-                        <!-- チュートリアルの二本指手 -->
-                        <div class="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 text-4xl md:text-6xl animate-tutorial-hand drop-shadow-lg">✌️</div>
+                        <!-- チュートリアルの二本指手 (右から左へ動くようにCSSで調整済み) -->
+                        <div class="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 text-3xl sm:text-5xl animate-tutorial-hand drop-shadow-lg">✌️</div>
                     </div>
                 </div>
             </div>
 
-            <button id="start-btn" class="bg-orange-500 hover:bg-orange-600 text-white text-xl md:text-2xl font-bold py-3 md:py-4 px-8 md:px-12 rounded-full shadow-lg transform transition active:scale-95">
+            <button id="start-btn" class="bg-orange-500 hover:bg-orange-600 text-white text-lg sm:text-xl md:text-2xl font-bold py-3 px-8 md:px-12 rounded-full shadow-lg transform transition active:scale-95">
                 スタート
             </button>
         </div>
     </div>
 
-    <!-- ゲーム画面左側：子どもたちとドロップゾーン -->
-    <div class="h-full w-2/3 bg-blue-50 flex justify-evenly items-end py-2 sm:py-4 md:py-8">
+    <!-- ゲーム画面左側（2/3）：子どもたちとドロップゾーン。下が見切れないように上部へ寄せる(items-start -> mt-*) -->
+    <div class="h-full w-2/3 bg-blue-50 flex justify-evenly items-start pt-2 sm:pt-4">
         <!-- 子供1 -->
-        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="0">
-            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-0">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-0">
+        <!-- 見切れないように h-full ではなく h-[95%] 程度にし、中身を上寄りに配置 -->
+        <div class="kid-container flex flex-col items-center w-1/3 h-[95dvh] justify-start pt-2 sm:pt-4" data-kid-id="0">
+            <div class="word-popup h-6 sm:h-8 md:h-12 mb-1 text-lg sm:text-2xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-3xl sm:text-4xl md:text-6xl transition-transform duration-300 transform mb-1 sm:mb-2" id="face-0">😭</div>
+            <!-- 高さを画面の残りに合わせて伸縮 (flex-1) -->
+            <div class="slots-container flex flex-col-reverse gap-1 bg-blue-100/50 p-1 sm:p-2 rounded-xl w-16 sm:w-20 md:w-28 flex-1 max-h-[70dvh] mb-2" id="slots-0">
                 <!-- Javascriptで5つのスロットを生成します -->
             </div>
         </div>
         <!-- 子供2 -->
-        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="1">
-            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-1">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-1"></div>
+        <div class="kid-container flex flex-col items-center w-1/3 h-[95dvh] justify-start pt-2 sm:pt-4" data-kid-id="1">
+            <div class="word-popup h-6 sm:h-8 md:h-12 mb-1 text-lg sm:text-2xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-3xl sm:text-4xl md:text-6xl transition-transform duration-300 transform mb-1 sm:mb-2" id="face-1">😭</div>
+            <div class="slots-container flex flex-col-reverse gap-1 bg-blue-100/50 p-1 sm:p-2 rounded-xl w-16 sm:w-20 md:w-28 flex-1 max-h-[70dvh] mb-2" id="slots-1"></div>
         </div>
         <!-- 子供3 -->
-        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="2">
-            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-2">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-2"></div>
+        <div class="kid-container flex flex-col items-center w-1/3 h-[95dvh] justify-start pt-2 sm:pt-4" data-kid-id="2">
+            <div class="word-popup h-6 sm:h-8 md:h-12 mb-1 text-lg sm:text-2xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-3xl sm:text-4xl md:text-6xl transition-transform duration-300 transform mb-1 sm:mb-2" id="face-2">😭</div>
+            <div class="slots-container flex flex-col-reverse gap-1 bg-blue-100/50 p-1 sm:p-2 rounded-xl w-16 sm:w-20 md:w-28 flex-1 max-h-[70dvh] mb-2" id="slots-2"></div>
         </div>
     </div>
 
-    <!-- ゲーム画面右側：キャンディ置き場 -->
+    <!-- ゲーム画面右側（1/3）：キャンディ置き場 -->
+    <!-- z-10 を設定し、かつ overflow-hidden を持たないことで、左側にドラッグした時にはみ出して表示可能にする -->
     <div id="candy-pool" class="h-full w-1/3 bg-orange-100 border-l-8 border-orange-200 relative p-2 md:p-4 z-10">
-        <div class="absolute inset-0 flex items-center justify-center opacity-30 text-xl sm:text-2xl md:text-3xl font-bold text-orange-800 pointer-events-none text-center leading-relaxed px-2">
+        <div class="absolute inset-0 flex items-center justify-center opacity-30 text-lg sm:text-xl md:text-3xl font-bold text-orange-800 pointer-events-none text-center leading-relaxed px-1">
             2個ずつ<br>分かれているよ
         </div>
         <!-- Javascriptでキャンディペアを生成します -->
@@ -151,16 +161,16 @@
 
     <!-- 成功画面 -->
     <div id="success-overlay" class="absolute inset-0 bg-white/90 z-40 hidden flex-col items-center justify-center text-center p-4">
-        <!-- SVG はなまる -->
-        <svg viewBox="-30 -30 160 160" class="w-48 h-48 md:w-80 md:h-80 text-red-500 animate-bounce-scale overflow-visible">
+        <!-- SVG はなまる。見切れないように viewBox を広く取り、サイズも調整 -->
+        <svg viewBox="-50 -50 200 200" class="w-40 h-40 sm:w-64 sm:h-64 text-red-500 animate-bounce-scale overflow-visible">
             <!-- 中心丸 -->
             <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="3" class="hanamaru-path" />
             <!-- 花びらループ -->
             <path d="M50,15 C60,-5 85,5 85,25 C105,30 105,60 85,75 C85,95 60,105 50,85 C40,105 15,95 15,75 C-5,60 -5,30 15,25 C15,5 40,-5 50,15 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="hanamaru-path" />
         </svg>
-        <h2 class="text-4xl md:text-7xl font-bold text-red-500 mt-4 md:mt-8 tracking-widest drop-shadow-md">できたね！</h2>
-        <p class="text-xl md:text-2xl font-bold text-gray-700 mt-2 md:mt-4">みんな笑顔になったよ！</p>
-        <button onclick="location.reload()" class="mt-8 md:mt-12 bg-blue-500 hover:bg-blue-600 text-white text-lg md:text-xl font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-md">
+        <h2 class="text-3xl sm:text-5xl md:text-7xl font-bold text-red-500 mt-4 tracking-widest drop-shadow-md">できたね！</h2>
+        <p class="text-lg sm:text-xl md:text-2xl font-bold text-gray-700 mt-2">みんな笑顔になったよ！</p>
+        <button onclick="location.reload()" class="mt-8 bg-blue-500 hover:bg-blue-600 text-white text-lg sm:text-xl font-bold py-2 sm:py-3 px-6 sm:px-8 rounded-full shadow-md">
             もういちどあそぶ
         </button>
     </div>
@@ -169,17 +179,35 @@
         // --- 状態管理 ---
         const kidsCount = [0, 0, 0]; // 各子供の現在のペア数（最大5）
         const words = ["ニー", "シー", "ロー", "ハー", "トー"]; // 2, 4, 6, 8, 10
-        const readings = ["にー", "しー", "ろー", "はー", "とー"]; // 読み上げ用
+        const readings = ["ニー", "シー", "ロー", "ハー", "トー"]; // 読み上げ用
         const totalPairs = 15; // 30個のキャンディ = 15ペア
         let distributedPairs = 0;
-        let initialAudioPlayed = false;
+        let audioUnlocked = false; // モバイル用：音声ロックが解除されたか
 
         // --- 音声合成 (Web Speech API) ---
         const synth = window.speechSynthesis;
+        
+        // モバイル（iOS等）での音声再生制限を解除するためのハック
+        function unlockAudio() {
+            if (audioUnlocked || !synth) return;
+            // 無音（または非常に短い空白）を再生してロックを解除
+            const utterance = new SpeechSynthesisUtterance('');
+            utterance.volume = 0;
+            synth.speak(utterance);
+            audioUnlocked = true;
+            // 一度解除したらイベントリスナーを外す
+            document.removeEventListener('touchstart', unlockAudio);
+            document.removeEventListener('click', unlockAudio);
+        }
+
+        // 画面のどこかを初めて触った時にロック解除を試みる
+        document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+        document.addEventListener('click', unlockAudio, { once: true });
+
         function speak(text) {
             if (!synth) return;
             if (synth.speaking) {
-                synth.cancel(); // 連続再生をリセット
+                synth.cancel(); // 連続再生をリセットしてかぶらないようにする
             }
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ja-JP';
@@ -188,17 +216,11 @@
             synth.speak(utterance);
         }
 
-        function playInitialAudio() {
-            if (!initialAudioPlayed) {
-                speak("にこずつ、わけよう");
-                initialAudioPlayed = true;
-            }
-        }
-
+        // タイトルの 🔊 マークを押したときの処理
         function playTitleAudio(e) {
             if(e) e.stopPropagation();
+            unlockAudio(); // 念のためここでも解除を試みる
             speak("にこずつ、わけよう");
-            initialAudioPlayed = true;
         }
 
         // --- DOM要素 ---
@@ -214,14 +236,14 @@
                 // 下から上へ積み上げるため、そのまま5つ生成（flex-col-reverseで下がインデックス0になる）
                 for (let i = 0; i < 5; i++) {
                     const slot = document.createElement('div');
-                    // 固定高さではなく、親の高さに合わせて均等に伸縮する(flex-1)に変更
-                    slot.className = 'slot w-full flex-1 border-2 border-dashed border-blue-300 rounded-lg md:rounded-xl flex items-center justify-center bg-white/50 relative';
+                    // 親の高さに合わせて均等に伸縮する (flex-1)
+                    slot.className = 'slot w-full flex-1 border-2 border-dashed border-blue-300 rounded-md sm:rounded-lg flex items-center justify-center bg-white/50 relative';
                     slot.dataset.kidIndex = k;
                     slot.dataset.slotIndex = i;
                     
                     // 視覚的補助としての数字（薄く表示）
                     const helperText = document.createElement('span');
-                    helperText.className = 'text-[10px] md:text-xs text-blue-300 absolute right-1 bottom-0 font-bold';
+                    helperText.className = 'text-[9px] sm:text-[10px] md:text-xs text-blue-300 absolute right-1 bottom-0 font-bold';
                     helperText.innerText = (i + 1) * 2; // 2, 4, 6, 8, 10
                     slot.appendChild(helperText);
 
@@ -234,20 +256,21 @@
         function initCandies() {
             const poolRect = candyPool.getBoundingClientRect();
             // キャンディのサイズ（概算）スマホの狭い画面も考慮して小さめに設定
-            const candyWidth = 60; 
-            const candyHeight = 40;
+            const candyWidth = 50; 
+            const candyHeight = 30;
 
             for (let i = 0; i < totalPairs; i++) {
                 const pair = document.createElement('div');
-                pair.className = 'candy-pair absolute flex items-center justify-center space-x-0.5 cursor-grab bg-white border-2 border-orange-200 rounded-full px-1 md:px-2 py-0.5 md:py-1 shadow-sm';
-                pair.innerHTML = '<span class="text-2xl sm:text-3xl md:text-4xl pointer-events-none">🍬</span><span class="text-2xl sm:text-3xl md:text-4xl pointer-events-none">🍬</span>';
+                pair.className = 'candy-pair absolute flex items-center justify-center space-x-0 cursor-grab bg-white border-2 border-orange-200 rounded-full px-1 py-0.5 shadow-sm';
+                pair.innerHTML = '<span class="text-xl sm:text-2xl md:text-3xl pointer-events-none">🍬</span><span class="text-xl sm:text-2xl md:text-3xl pointer-events-none">🍬</span>';
                 
-                // ランダムに配置 (画面外にはみ出さないようにマージンを取る)
+                // ランダムに配置 (右側のプール内に収まるように)
                 const maxX = poolRect.width - candyWidth - 10;
                 const maxY = poolRect.height - candyHeight - 10;
-                // 確実にエリア内に収める
-                const randomX = Math.max(5, Math.random() * maxX);
-                const randomY = Math.max(5, Math.random() * maxY);
+                
+                // 確実にエリア内に収める (マイナスにならないようにMath.maxを使用)
+                const randomX = Math.max(5, Math.random() * (maxX > 0 ? maxX : 50));
+                const randomY = Math.max(5, Math.random() * (maxY > 0 ? maxY : 50));
 
                 pair.style.left = `${randomX}px`;
                 pair.style.top = `${randomY}px`;
@@ -263,11 +286,11 @@
         let draggedElement = null;
         let startX = 0, startY = 0;
         let initialLeft = 0, initialTop = 0;
-        // z-index管理用 (初期値をCSSより少し大きくしておく)
-        let maxZIndex = 50; 
+        // z-index管理用 (重なり問題を解消するため、新しく触ったものを最前面にする)
+        let maxZIndex = 100; 
 
         function setupDragEvents(element) {
-            // タッチデバイス用
+            // タッチデバイス用 (passive: falseを指定してe.preventDefault()を許可する)
             element.addEventListener('touchstart', handleDragStart, {passive: false});
             element.addEventListener('touchmove', handleDragMove, {passive: false});
             element.addEventListener('touchend', handleDragEnd);
@@ -279,7 +302,10 @@
         function handleDragStart(e) {
             if (e.target.classList.contains('dropped')) return;
             
-            e.preventDefault(); // スクロール防止
+            // 音声ロック解除の最終防衛線（タッチ開始時）
+            unlockAudio();
+
+            e.preventDefault(); // スワイプによる画面全体のスクロール・バウンスを防止
             draggedElement = e.currentTarget;
             draggedElement.classList.add('dragging');
             
@@ -293,7 +319,7 @@
             startX = clientX;
             startY = clientY;
             
-            // 現在の座標を取得 (inline styleから、またはgetBoundingClientRect)
+            // 現在の座標を取得
             initialLeft = parseFloat(draggedElement.style.left) || 0;
             initialTop = parseFloat(draggedElement.style.top) || 0;
 
@@ -314,7 +340,7 @@
             const dx = clientX - startX;
             const dy = clientY - startY;
 
-            // 画面の座標系での移動（candyPool内の相対座標として更新）
+            // 移動先の座標を更新
             draggedElement.style.left = `${initialLeft + dx}px`;
             draggedElement.style.top = `${initialTop + dy}px`;
         }
@@ -350,8 +376,7 @@
                 // ドロップ成功
                 successDrop(droppedOnKid, draggedElement);
             } else {
-                // 失敗（元の位置に戻るアニメーション等も可能だが、今回は単純にその場に残るか少し戻す）
-                // 視覚的優位の子が迷わないよう、元のプールに戻す
+                // 失敗時は元の位置（プール内）に戻す
                 draggedElement.style.transition = 'all 0.3s ease-out';
                 draggedElement.style.left = `${initialLeft}px`;
                 draggedElement.style.top = `${initialTop}px`;
@@ -368,7 +393,7 @@
             
             // ターゲットのスロットを取得
             const slotsContainer = document.getElementById(`slots-${kidIndex}`);
-            const targetSlot = slotsContainer.children[currentCount]; // flex-col-reverseなので0が一番下
+            const targetSlot = slotsContainer.children[currentCount]; // flex-col-reverseなので0が一番下（DOM上の順番に注意）
 
             // キャンディをスロットの中へDOM移動
             targetSlot.innerHTML = ''; // 補助数字を消す
@@ -380,23 +405,24 @@
             element.style.top = '0';
             element.style.transform = 'none';
             element.style.transition = 'none';
-            // ドロップされた要素はz-indexのリセット（または固定値）を行い、不要なスタックを防ぐ
+            
+            // ドロップされた要素はz-indexのリセットを行い、他を隠さないようにする
             element.style.zIndex = '1';
             
-            // 不要なクラスを安全に全削除し、スロットにぴったり収まる専用クラスを付与
-            element.className = 'candy-pair dropped w-full h-full flex items-center justify-center space-x-0.5';
+            // クラスを整理してスロットに収まるようにする
+            element.className = 'candy-pair dropped w-full h-full flex items-center justify-center space-x-0';
 
             // 絵文字自体のサイズも、狭いスロットに収まるように縮小
             const emojis = element.querySelectorAll('span');
             emojis.forEach(e => {
-                e.className = 'text-lg sm:text-xl md:text-3xl pointer-events-none';
+                e.className = 'text-lg sm:text-xl pointer-events-none';
             });
 
             // 状態更新
             kidsCount[kidIndex]++;
             distributedPairs++;
 
-            // 言語のポップアップ表示 ("ニー", "シー", ...)
+            // 言語のポップアップ表示 ("ニー", "シー", ...) と音声再生
             showWord(kidIndex, currentCount);
 
             // 10個（5ペア）になったら笑顔に
@@ -420,39 +446,40 @@
             const container = document.querySelector(`.kid-container[data-kid-id="${kidIndex}"]`);
             const wordPopup = container.querySelector('.word-popup');
             
-            // 音声再生
-            speak(readings[countIndex]);
-
             // 文字を設定
             wordPopup.innerText = words[countIndex];
+            
+            // ナレーション音声再生
+            speak(readings[countIndex]);
             
             // アニメーションのリセットと適用
             wordPopup.classList.remove('animate-pop');
             wordPopup.style.opacity = '0';
             
-            // 少し待ってからアニメーション開始 (DOMの更新を確実にするため)
+            // 少し待ってからアニメーション開始
             requestAnimationFrame(() => {
                 wordPopup.style.opacity = '1';
                 wordPopup.classList.add('animate-pop');
             });
 
-            // 一定時間後に消す (一番最後の「トー」は笑顔と共に少し残すのもあり)
+            // 一定時間後に消す
             setTimeout(() => {
                 wordPopup.style.opacity = '0';
                 wordPopup.classList.remove('animate-pop');
-            }, 1500);
+            }, 1200);
         }
 
         function showSuccess() {
             successOverlay.classList.remove('hidden');
             successOverlay.classList.add('flex');
             
-            // 紙吹雪などの追加演出が必要な場合はここに追加
+            // 最後に「できたね」などの音声を鳴らすことも可能
+            speak("できたね！");
         }
 
         // --- 初期化 ---
         startBtn.addEventListener('click', (e) => {
-            if(e) e.stopPropagation(); // 背景タッチ判定と重複しないように
+            if(e) e.stopPropagation(); 
             tutorialOverlay.style.opacity = '0';
             tutorialOverlay.style.transition = 'opacity 0.5s ease-out';
             setTimeout(() => {
@@ -460,17 +487,11 @@
             }, 500);
         });
 
-        // 自動再生の試行（環境によってはブロックされますが、許可されていれば鳴ります）
-        setTimeout(() => {
-            if(!initialAudioPlayed && synth) {
-                playInitialAudio();
-            }
-        }, 1000);
-
         // 画面読み込み時にUI生成
         window.onload = () => {
             initSlots();
-            initCandies();
+            // スロットの描画完了を少し待ってからキャンディを配置（エリアの座標計算を正確にするため）
+            setTimeout(initCandies, 100);
         };
 
     </script>
