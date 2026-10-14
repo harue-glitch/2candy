@@ -90,77 +90,77 @@
 </head>
 <body class="w-screen h-screen flex flex-row relative" onclick="playInitialAudio()">
 
-    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-6 text-center text-white">
-        <div class="bg-white text-gray-800 p-8 rounded-3xl shadow-2xl max-w-2xl w-full relative">
-            <h1 class="text-4xl md:text-5xl font-bold mb-8 leading-relaxed text-orange-500 tracking-widest cursor-pointer" onclick="playTitleAudio(event)">
-                2こずつ　わけよう <span class="text-3xl text-gray-400">🔊</span>
+    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-2 md:p-6 text-center text-white">
+        <div class="bg-white text-gray-800 p-4 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl w-11/12 max-w-2xl max-h-[95vh] overflow-y-auto relative flex flex-col items-center">
+            <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-8 leading-relaxed text-orange-500 tracking-widest cursor-pointer" onclick="playTitleAudio(event)">
+                2こずつ　わけよう <span class="text-2xl md:text-3xl text-gray-400">🔊</span>
             </h1>
             
-            <div class="flex justify-center items-center gap-8 my-8 h-48 bg-orange-50 rounded-2xl relative overflow-hidden">
+            <div class="flex justify-center items-center gap-4 md:gap-8 my-4 md:my-8 h-24 sm:h-32 md:h-48 bg-orange-50 rounded-2xl relative overflow-hidden w-full">
                 <div class="flex flex-col items-center z-10">
-                    <span class="text-6xl">😭</span>
-                    <div class="w-24 h-12 border-4 border-dashed border-orange-300 rounded-xl mt-2 flex items-center justify-center bg-white"></div>
+                    <span class="text-4xl md:text-6xl">😭</span>
+                    <div class="w-16 h-8 md:w-24 md:h-12 border-4 border-dashed border-orange-300 rounded-xl mt-1 md:mt-2 flex items-center justify-center bg-white"></div>
                 </div>
                 
                 <div class="relative z-10">
-                    <div class="text-4xl bg-white/80 p-2 rounded-full shadow-md relative">
+                    <div class="text-2xl md:text-4xl bg-white/80 p-2 rounded-full shadow-md relative">
                         🍬🍬
                         <!-- チュートリアルの二本指手 -->
-                        <div class="absolute -bottom-8 -right-8 text-6xl animate-tutorial-hand drop-shadow-lg">✌️</div>
+                        <div class="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 text-4xl md:text-6xl animate-tutorial-hand drop-shadow-lg">✌️</div>
                     </div>
                 </div>
             </div>
 
-            <button id="start-btn" class="bg-orange-500 hover:bg-orange-600 text-white text-2xl font-bold py-4 px-12 rounded-full shadow-lg transform transition active:scale-95">
+            <button id="start-btn" class="bg-orange-500 hover:bg-orange-600 text-white text-xl md:text-2xl font-bold py-3 md:py-4 px-8 md:px-12 rounded-full shadow-lg transform transition active:scale-95">
                 スタート
             </button>
         </div>
     </div>
 
     <!-- ゲーム画面左側：子どもたちとドロップゾーン -->
-    <div class="h-full w-2/3 bg-blue-50 flex justify-evenly items-end pb-8 pt-8">
+    <div class="h-full w-2/3 bg-blue-50 flex justify-evenly items-end py-2 sm:py-4 md:py-8">
         <!-- 子供1 -->
-        <div class="kid-container flex flex-col items-center w-1/3" data-kid-id="0">
-            <div class="word-popup h-16 mb-2 text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-7xl transition-transform duration-300 transform mb-4" id="face-0">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-2 bg-blue-100/50 p-2 rounded-2xl w-24 md:w-32" id="slots-0">
+        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="0">
+            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-0">😭</div>
+            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-0">
                 <!-- Javascriptで5つのスロットを生成します -->
             </div>
         </div>
         <!-- 子供2 -->
-        <div class="kid-container flex flex-col items-center w-1/3" data-kid-id="1">
-            <div class="word-popup h-16 mb-2 text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-7xl transition-transform duration-300 transform mb-4" id="face-1">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-2 bg-blue-100/50 p-2 rounded-2xl w-24 md:w-32" id="slots-1"></div>
+        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="1">
+            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-1">😭</div>
+            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-1"></div>
         </div>
         <!-- 子供3 -->
-        <div class="kid-container flex flex-col items-center w-1/3" data-kid-id="2">
-            <div class="word-popup h-16 mb-2 text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
-            <div class="face text-7xl transition-transform duration-300 transform mb-4" id="face-2">😭</div>
-            <div class="slots-container flex flex-col-reverse gap-2 bg-blue-100/50 p-2 rounded-2xl w-24 md:w-32" id="slots-2"></div>
+        <div class="kid-container flex flex-col items-center w-1/3 h-full justify-end" data-kid-id="2">
+            <div class="word-popup h-6 md:h-16 mb-1 md:mb-2 text-xl md:text-3xl font-bold text-orange-600 opacity-0 transition-opacity flex items-center justify-center"></div>
+            <div class="face text-4xl sm:text-5xl md:text-7xl transition-transform duration-300 transform mb-1 md:mb-4" id="face-2">😭</div>
+            <div class="slots-container flex flex-col-reverse gap-1 md:gap-2 bg-blue-100/50 p-1 md:p-2 rounded-xl md:rounded-2xl w-20 sm:w-24 md:w-32 h-[55vh] md:h-auto md:min-h-[250px]" id="slots-2"></div>
         </div>
     </div>
 
     <!-- ゲーム画面右側：キャンディ置き場 -->
-    <div id="candy-pool" class="h-full w-1/3 bg-orange-100 border-l-8 border-orange-200 relative p-4 z-10">
-        <div class="absolute inset-0 flex items-center justify-center opacity-30 text-2xl md:text-3xl font-bold text-orange-800 pointer-events-none text-center leading-relaxed">
+    <div id="candy-pool" class="h-full w-1/3 bg-orange-100 border-l-8 border-orange-200 relative p-2 md:p-4 z-10">
+        <div class="absolute inset-0 flex items-center justify-center opacity-30 text-xl sm:text-2xl md:text-3xl font-bold text-orange-800 pointer-events-none text-center leading-relaxed px-2">
             2個ずつ<br>分かれているよ
         </div>
         <!-- Javascriptでキャンディペアを生成します -->
     </div>
 
     <!-- 成功画面 -->
-    <div id="success-overlay" class="absolute inset-0 bg-white/90 z-40 hidden flex-col items-center justify-center text-center">
+    <div id="success-overlay" class="absolute inset-0 bg-white/90 z-40 hidden flex-col items-center justify-center text-center p-4">
         <!-- SVG はなまる -->
-        <svg viewBox="-30 -30 160 160" class="w-64 h-64 md:w-80 md:h-80 text-red-500 animate-bounce-scale overflow-visible">
+        <svg viewBox="-30 -30 160 160" class="w-48 h-48 md:w-80 md:h-80 text-red-500 animate-bounce-scale overflow-visible">
             <!-- 中心丸 -->
             <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="3" class="hanamaru-path" />
             <!-- 花びらループ -->
             <path d="M50,15 C60,-5 85,5 85,25 C105,30 105,60 85,75 C85,95 60,105 50,85 C40,105 15,95 15,75 C-5,60 -5,30 15,25 C15,5 40,-5 50,15 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="hanamaru-path" />
         </svg>
-        <h2 class="text-5xl md:text-7xl font-bold text-red-500 mt-8 tracking-widest drop-shadow-md">できたね！</h2>
-        <p class="text-2xl font-bold text-gray-700 mt-4">みんな笑顔になったよ！</p>
-        <button onclick="location.reload()" class="mt-12 bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold py-3 px-8 rounded-full shadow-md">
+        <h2 class="text-4xl md:text-7xl font-bold text-red-500 mt-4 md:mt-8 tracking-widest drop-shadow-md">できたね！</h2>
+        <p class="text-xl md:text-2xl font-bold text-gray-700 mt-2 md:mt-4">みんな笑顔になったよ！</p>
+        <button onclick="location.reload()" class="mt-8 md:mt-12 bg-blue-500 hover:bg-blue-600 text-white text-lg md:text-xl font-bold py-2 md:py-3 px-6 md:px-8 rounded-full shadow-md">
             もういちどあそぶ
         </button>
     </div>
@@ -214,13 +214,14 @@
                 // 下から上へ積み上げるため、そのまま5つ生成（flex-col-reverseで下がインデックス0になる）
                 for (let i = 0; i < 5; i++) {
                     const slot = document.createElement('div');
-                    slot.className = 'slot w-full h-10 md:h-12 border-2 border-dashed border-blue-300 rounded-xl flex items-center justify-center bg-white/50 relative';
+                    // 固定高さではなく、親の高さに合わせて均等に伸縮する(flex-1)に変更
+                    slot.className = 'slot w-full flex-1 border-2 border-dashed border-blue-300 rounded-lg md:rounded-xl flex items-center justify-center bg-white/50 relative';
                     slot.dataset.kidIndex = k;
                     slot.dataset.slotIndex = i;
                     
                     // 視覚的補助としての数字（薄く表示）
                     const helperText = document.createElement('span');
-                    helperText.className = 'text-xs text-blue-300 absolute right-1 bottom-0 font-bold';
+                    helperText.className = 'text-[10px] md:text-xs text-blue-300 absolute right-1 bottom-0 font-bold';
                     helperText.innerText = (i + 1) * 2; // 2, 4, 6, 8, 10
                     slot.appendChild(helperText);
 
@@ -232,20 +233,21 @@
         // キャンディペアの初期化
         function initCandies() {
             const poolRect = candyPool.getBoundingClientRect();
-            // キャンディのサイズ（概算）
-            const candyWidth = 80; 
-            const candyHeight = 50;
+            // キャンディのサイズ（概算）スマホの狭い画面も考慮して小さめに設定
+            const candyWidth = 60; 
+            const candyHeight = 40;
 
             for (let i = 0; i < totalPairs; i++) {
                 const pair = document.createElement('div');
-                pair.className = 'candy-pair absolute flex items-center justify-center space-x-1 cursor-grab bg-white border-2 border-orange-200 rounded-full px-2 py-1 shadow-sm';
-                pair.innerHTML = '<span class="text-3xl md:text-4xl pointer-events-none">🍬</span><span class="text-3xl md:text-4xl pointer-events-none">🍬</span>';
+                pair.className = 'candy-pair absolute flex items-center justify-center space-x-0.5 cursor-grab bg-white border-2 border-orange-200 rounded-full px-1 md:px-2 py-0.5 md:py-1 shadow-sm';
+                pair.innerHTML = '<span class="text-2xl sm:text-3xl md:text-4xl pointer-events-none">🍬</span><span class="text-2xl sm:text-3xl md:text-4xl pointer-events-none">🍬</span>';
                 
                 // ランダムに配置 (画面外にはみ出さないようにマージンを取る)
-                const maxX = poolRect.width - candyWidth - 40;
-                const maxY = poolRect.height - candyHeight - 40;
-                const randomX = Math.random() * maxX + 20;
-                const randomY = Math.random() * maxY + 20;
+                const maxX = poolRect.width - candyWidth - 10;
+                const maxY = poolRect.height - candyHeight - 10;
+                // 確実にエリア内に収める
+                const randomX = Math.max(5, Math.random() * maxX);
+                const randomY = Math.max(5, Math.random() * maxY);
 
                 pair.style.left = `${randomX}px`;
                 pair.style.top = `${randomY}px`;
@@ -380,14 +382,21 @@
             element.style.transition = 'none';
             // ドロップされた要素はz-indexのリセット（または固定値）を行い、不要なスタックを防ぐ
             element.style.zIndex = '1';
-            element.classList.remove('absolute', 'border-2', 'border-orange-200', 'px-2', 'py-1', 'dragging');
-            element.classList.add('dropped', 'w-full', 'h-full');
+            
+            // 不要なクラスを安全に全削除し、スロットにぴったり収まる専用クラスを付与
+            element.className = 'candy-pair dropped w-full h-full flex items-center justify-center space-x-0.5';
+
+            // 絵文字自体のサイズも、狭いスロットに収まるように縮小
+            const emojis = element.querySelectorAll('span');
+            emojis.forEach(e => {
+                e.className = 'text-lg sm:text-xl md:text-3xl pointer-events-none';
+            });
 
             // 状態更新
             kidsCount[kidIndex]++;
             distributedPairs++;
 
-            // 言葉のポップアップ表示 ("ニー", "シー", ...)
+            // 言語のポップアップ表示 ("ニー", "シー", ...)
             showWord(kidIndex, currentCount);
 
             // 10個（5ペア）になったら笑顔に
