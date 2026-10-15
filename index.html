@@ -71,7 +71,7 @@
         }
         .candy-pair.dragging {
             transform: scale(1.2);
-            z-index: 9999 !important;
+            z-index: 9999 !important; /* ドラッグ中は必ず一番手前に */
             opacity: 0.9;
             transition: none;
         }
@@ -87,12 +87,19 @@
 </head>
 <body class="flex flex-row relative">
 
+    <!-- 【iOS音声対策】最初に画面をタッチさせるためのオーバーレイ -->
+    <div id="initial-tap-overlay" class="absolute inset-0 bg-orange-100 z-[100] flex flex-col items-center justify-center cursor-pointer" onclick="handleInitialTap()">
+        <div class="animate-bounce-scale bg-white p-6 md:p-10 rounded-3xl shadow-xl flex flex-col items-center">
+            <span class="text-6xl md:text-8xl mb-4">👆</span>
+            <p class="text-2xl md:text-4xl font-bold text-orange-500 tracking-widest text-center">がめんを<br>タッチしてね！</p>
+        </div>
+    </div>
+
     <!-- チュートリアル画面（オーバーレイ） -->
-    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-2 text-center text-white">
+    <div id="tutorial-overlay" class="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center p-2 text-center text-white" style="display: none;">
         <div class="bg-white text-gray-800 p-4 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl w-11/12 max-w-2xl max-h-[90dvh] flex flex-col items-center overflow-y-auto">
-            <p class="text-sm sm:text-base text-gray-500 mb-2">画面をタッチしてね</p>
             <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 md:mb-6 leading-relaxed text-orange-500 tracking-widest cursor-pointer flex items-center justify-center gap-2" onclick="playTitleAudio(event)">
-                2こずつ　わけよう <span class="text-2xl md:text-3xl text-gray-400">🔊</span>
+                2こずつ　わけよう <span class="text-2xl md:text-3xl text-gray-400 active:scale-95 transition-transform">🔊</span>
             </h1>
             
             <div class="flex justify-center items-center gap-4 md:gap-12 my-2 md:my-6 h-24 sm:h-32 bg-orange-50 rounded-2xl relative w-full overflow-hidden">
@@ -109,7 +116,7 @@
                 <div class="relative z-10 w-1/2 flex justify-center">
                     <!-- このラッパー全体が左へ移動する -->
                     <div class="animate-tutorial-hand relative">
-                        <div class="text-2xl sm:text-4xl bg-white/90 p-1 sm:p-2 rounded-full shadow-md border-2 border-orange-200">
+                        <div class="text-2xl sm:text-4xl bg-white/90 p-1 sm:p-2 rounded-full shadow-md border-2 border-orange-200 flex items-center">
                             🍬🍬
                         </div>
                         <!-- チュートリアルの指差し (👆) -->
@@ -147,10 +154,10 @@
         </div>
     </div>
 
-    <!-- ゲーム画面右側（1/3）：キャンディ置き場 -->
+    <!-- ゲーム画面右側（1/3）：キャンディ置き場（※overflow-hiddenを削除） -->
     <div id="candy-pool" class="h-full w-1/3 bg-orange-100 border-l-8 border-orange-200 relative p-1 md:p-4 z-10">
         <div class="absolute inset-0 flex items-center justify-center opacity-30 text-base sm:text-xl md:text-3xl font-bold text-orange-800 pointer-events-none text-center leading-relaxed px-1">
-            2個ずつ<br>分かれているよ
+            <!-- 視覚的なヒントとして背景にテキスト配置 -->
         </div>
         <!-- Javascriptでキャンディペアを生成 -->
     </div>
@@ -177,16 +184,15 @@
         const totalPairs = 15;
         let distributedPairs = 0;
         
-        let audioUnlocked = false; 
-        let titleSpoken = false; // タイトルを喋ったかどうか
+        // --- iOS対応の堅牢な音声再生システム ---
         const synth = window.speechSynthesis;
         
-        // 音声再生関数
         function speak(text) {
             if (!synth) return;
-            if (synth.speaking) {
-                synth.cancel();
-            }
+            
+            // 重要: iOSの読み上げ詰まり（バグ）を防止するために、喋る前に必ずキャンセルする
+            synth.cancel();
+
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ja-JP';
             utterance.rate = 0.9; 
@@ -194,36 +200,20 @@
             synth.speak(utterance);
         }
 
-        // 画面のどこかを初めてタッチ（クリック）した時に発火
-        function unlockAudio(e) {
-            if (!synth) return;
+        // 最初のタップ画面が押された時の処理（ここで確実にオーディオのロックを解除）
+        function handleInitialTap() {
+            // ナレーションを再生
+            speak("にこずつ、わけよう");
             
-            // 1. 音声機能のロックを解除する（無音再生）
-            if (!audioUnlocked) {
-                const utterance = new SpeechSynthesisUtterance('');
-                utterance.volume = 0;
-                synth.speak(utterance);
-                audioUnlocked = true;
-            }
-
-            // 2. チュートリアル画面が開いていて、まだ喋っていなければナレーションする
-            const tutorial = document.getElementById('tutorial-overlay');
-            if (tutorial.style.display !== 'none' && !titleSpoken) {
-                speak("にこずつ、わけよう");
-                titleSpoken = true;
-            }
+            // タップ画面を隠して、チュートリアル画面を表示
+            document.getElementById('initial-tap-overlay').style.display = 'none';
+            document.getElementById('tutorial-overlay').style.display = 'flex';
         }
-
-        // タッチイベントとクリックイベント両方で監視
-        document.addEventListener('touchstart', unlockAudio, { passive: true });
-        document.addEventListener('click', unlockAudio);
 
         // タイトルの 🔊 マークを押したときの処理 (何度でも鳴らせる)
         function playTitleAudio(e) {
             if(e) e.stopPropagation();
-            unlockAudio(); 
             speak("にこずつ、わけよう");
-            titleSpoken = true;
         }
 
         // --- DOM要素 ---
@@ -237,7 +227,7 @@
                 const slotsContainer = document.getElementById(`slots-${k}`);
                 for (let i = 0; i < 5; i++) {
                     const slot = document.createElement('div');
-                    // スマホ横向きでも収まるように min-h-0 と flex-1 を組み合わせる
+                    // スマホ横向きでも収まるように min-h-[1.5rem] と flex-1 を組み合わせる
                     slot.className = 'slot w-full flex-1 min-h-[1.5rem] border-2 border-dashed border-blue-300 rounded-md sm:rounded-lg flex items-center justify-center bg-white/50 relative';
                     slot.dataset.kidIndex = k;
                     slot.dataset.slotIndex = i;
@@ -280,7 +270,7 @@
         let draggedElement = null;
         let startX = 0, startY = 0;
         let initialLeft = 0, initialTop = 0;
-        let maxZIndex = 100; 
+        let maxZIndex = 100; // 重なり順の管理変数
 
         function setupDragEvents(element) {
             element.addEventListener('touchstart', handleDragStart, {passive: false});
@@ -291,12 +281,12 @@
 
         function handleDragStart(e) {
             if (e.target.classList.contains('dropped')) return;
-            unlockAudio();
 
             e.preventDefault(); 
             draggedElement = e.currentTarget;
             draggedElement.classList.add('dragging');
             
+            // 新しく触った要素を必ず一番手前に持ってくる
             maxZIndex++;
             draggedElement.style.zIndex = maxZIndex;
 
@@ -380,6 +370,7 @@
             element.style.top = '0';
             element.style.transform = 'none';
             element.style.transition = 'none';
+            // スロットに入ったらz-indexを初期化して無駄な重なりを防ぐ
             element.style.zIndex = '1';
             
             element.className = 'candy-pair dropped w-full h-full flex items-center justify-center space-x-0 bg-transparent border-none shadow-none';
@@ -413,6 +404,8 @@
             const wordPopup = container.querySelector('.word-popup');
             
             wordPopup.innerText = words[countIndex];
+            
+            // ここで「ニー」「シー」等のナレーションを発声
             speak(readings[countIndex]);
             
             wordPopup.classList.remove('animate-pop');
@@ -438,7 +431,6 @@
         // --- 初期化イベント ---
         startBtn.addEventListener('click', (e) => {
             if(e) e.stopPropagation(); 
-            unlockAudio(); // 念のため解除
             
             tutorialOverlay.style.opacity = '0';
             tutorialOverlay.style.transition = 'opacity 0.5s ease-out';
